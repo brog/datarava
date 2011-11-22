@@ -1,0 +1,127 @@
+# This is an auto-generated Django model module.
+# You'll have to do the following manually to clean this up:
+#     * Rearrange models' order
+#     * Make sure each model has one field with primary_key=True
+# Feel free to rename the models, but don't rename db_table values or field names.
+#
+# Also note: You'll have to insert the output of 'django-admin.py sqlcustom [appname]'
+# into your database.
+
+from django.db import models
+
+class Sleeprecord(models.Model):
+    id = models.IntegerField(primary_key=True)
+    user_id = models.IntegerField()
+    awakenings = models.IntegerField()
+    awakeningszqpoints = models.IntegerField(db_column='awakeningsZqPoints') # Field name made lowercase.
+    bedtime = models.DateTimeField(db_column='bedTime') # Field name made lowercase.
+    grouping = models.IntegerField()
+    morningfeel = models.IntegerField(db_column='morningFeel') # Field name made lowercase.
+    risetime = models.DateTimeField(db_column='riseTime') # Field name made lowercase.
+    startdate = models.DateField(db_column='startDate') # Field name made lowercase.
+    timeindeep = models.IntegerField(db_column='timeInDeep') # Field name made lowercase.
+    timeindeeppercentage = models.IntegerField(db_column='timeInDeepPercentage') # Field name made lowercase.
+    timeindeepzqpoints = models.IntegerField(db_column='timeInDeepZqPoints') # Field name made lowercase.
+    timeinlight = models.IntegerField(db_column='timeInLight') # Field name made lowercase.
+    timeinlightpercentage = models.IntegerField(db_column='timeInLightPercentage') # Field name made lowercase.
+    timeinlightzqpoints = models.IntegerField(db_column='timeInLightZqPoints') # Field name made lowercase.
+    timeinrem = models.IntegerField(db_column='timeInRem') # Field name made lowercase.
+    timeinrempercentage = models.IntegerField(db_column='timeInRemPercentage') # Field name made lowercase.
+    timeinremzqpoints = models.IntegerField(db_column='timeInRemZqPoints') # Field name made lowercase.
+    timeinwake = models.IntegerField(db_column='timeInWake') # Field name made lowercase.
+    timeinwakepercentage = models.IntegerField(db_column='timeInWakePercentage') # Field name made lowercase.
+    timeinwakezqpoints = models.IntegerField(db_column='timeInWakeZqPoints') # Field name made lowercase.
+    timetoz = models.IntegerField(db_column='timeToZ') # Field name made lowercase.
+    totalz = models.IntegerField(db_column='totalZ') # Field name made lowercase.
+    totalzzqpoints = models.IntegerField(db_column='totalZZqPoints') # Field name made lowercase.
+    zq = models.IntegerField()
+    alarmreason = models.IntegerField(db_column='alarmReason') # Field name made lowercase.
+    alarmringindex = models.IntegerField(db_column='alarmRingIndex') # Field name made lowercase.
+    dayfeel = models.IntegerField(db_column='dayFeel') # Field name made lowercase.
+    sleepgraph = models.CharField(max_length=6144, db_column='sleepGraph') # Field name made lowercase.
+    sleepgraphstarttime = models.DateTimeField(db_column='sleepGraphStartTime') # Field name made lowercase.
+    sleepstealerscore = models.IntegerField(db_column='sleepStealerScore') # Field name made lowercase.
+    wakewindowendindex = models.IntegerField(db_column='wakeWindowEndIndex') # Field name made lowercase.
+    wakewindowshow = models.IntegerField(db_column='wakeWindowShow') # Field name made lowercase.
+    class Meta:
+        db_table = u'SleepRecord'
+
+class AuthGroup(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(unique=True, max_length=240)
+    class Meta:
+        db_table = u'auth_group'
+
+class AuthGroupPermissions(models.Model):
+    id = models.IntegerField(primary_key=True)
+    group_id = models.IntegerField()
+    permission_id = models.IntegerField()
+    class Meta:
+        db_table = u'auth_group_permissions'
+
+class AuthMessage(models.Model):
+    id = models.IntegerField(primary_key=True)
+    user_id = models.IntegerField()
+    message = models.TextField()
+    class Meta:
+        db_table = u'auth_message'
+
+class AuthPermission(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=150)
+    content_type_id = models.IntegerField()
+    codename = models.CharField(unique=True, max_length=300)
+    class Meta:
+        db_table = u'auth_permission'
+
+class AuthUser(models.Model):
+    id = models.IntegerField(primary_key=True)
+    username = models.CharField(unique=True, max_length=90)
+    first_name = models.CharField(max_length=90)
+    last_name = models.CharField(max_length=90)
+    email = models.CharField(max_length=225)
+    password = models.CharField(max_length=384)
+    is_staff = models.IntegerField()
+    is_active = models.IntegerField()
+    is_superuser = models.IntegerField()
+    last_login = models.DateTimeField()
+    date_joined = models.DateTimeField()
+    class Meta:
+        db_table = u'auth_user'
+
+class AuthUserGroups(models.Model):
+    id = models.IntegerField(primary_key=True)
+    user_id = models.IntegerField()
+    group_id = models.IntegerField()
+    class Meta:
+        db_table = u'auth_user_groups'
+
+class AuthUserUserPermissions(models.Model):
+    id = models.IntegerField(primary_key=True)
+    user_id = models.IntegerField()
+    permission_id = models.IntegerField()
+    class Meta:
+        db_table = u'auth_user_user_permissions'
+
+class DjangoContentType(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=300)
+    app_label = models.CharField(unique=True, max_length=300)
+    model = models.CharField(unique=True, max_length=300)
+    class Meta:
+        db_table = u'django_content_type'
+
+class DjangoSession(models.Model):
+    session_key = models.CharField(max_length=120, primary_key=True)
+    session_data = models.TextField()
+    expire_date = models.DateTimeField()
+    class Meta:
+        db_table = u'django_session'
+
+class DjangoSite(models.Model):
+    id = models.IntegerField(primary_key=True)
+    domain = models.CharField(max_length=300)
+    name = models.CharField(max_length=150)
+    class Meta:
+        db_table = u'django_site'
+

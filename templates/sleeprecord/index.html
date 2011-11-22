@@ -1,0 +1,9 @@
+{% if sleep_records %}
+    <ul>
+    {% for record in sleep_records %}
+        <li>Rise Time: {{record.risetime}}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No Records Came Back</p>
+{% endif %}
