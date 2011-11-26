@@ -5,7 +5,8 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^sleeprecords/$', 'sleeprecord.views.index')
+    url(r'^sleeprecords/$', 'sleeprecord.views.index'),
+    url(r'^sleeprecords/updatemydata/user/(\d+)/$', 'sleeprecord.views.updatemydata')
 
 
 

@@ -35,5 +35,6 @@ class Sleeprecord(models.Model):
     sleepstealerscore = models.IntegerField(db_column='sleepStealerScore') # Field name made lowercase.
     wakewindowendindex = models.IntegerField(db_column='wakeWindowEndIndex') # Field name made lowercase.
     wakewindowshow = models.IntegerField(db_column='wakeWindowShow') # Field name made lowercase.
+    wakewindowstartindex = models.IntegerField(db_column='wakeWindowStartIndex') # Field name made lowercase.
     class Meta:
         db_table = u'SleepRecord'

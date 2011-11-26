@@ -1,7 +1,7 @@
 {% if sleep_records %}
     <ul>
     {% for record in sleep_records %}
-        <li>Rise Time: {{record.risetime}}</li>
+        <li>SG Start Time: {{record.sleepgraphstarttime}} | wakeWindowStartIndex: {{record.wakewindowstartindex}} | wakeWindowEndIndex: {{record.wakewindowendindex}} </li>
     {% endfor %}
     </ul>
 {% else %}

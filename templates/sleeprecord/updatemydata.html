@@ -1,0 +1,12 @@
+{% if update_data_type %}
+    
+I'm going to try and update your {{ update_data_type }} data. Your user id is {{ userid }}.
+<br>Local: {{most_recent_local}}
+<br>Remote: {{most_recent_remote}}
+<br>Update or Not: {{update_or_not}}
+
+
+{% else %}
+    <p>Nothing came back.  Something could be totally wrong with the server.  Or maybe this is all a dream... a bad dream.</p>
+{% endif %}
+
