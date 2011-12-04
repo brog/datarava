@@ -1,4 +1,6 @@
 # Django settings for datarav project.
+import os.path
+APPLICATION_DIR = os.path.dirname( globals()[ '__file__' ] )
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -20,13 +22,46 @@ DATABASES = {
     }
 }
 
+# the django-social-auth module uses the @login_required
+# decorator, which directs browsers to settings.LOGIN_URL
+# after either a successful OR failed login
+LOGIN_URL          = '/login-form/'
+LOGIN_REDIRECT_URL = '/logged-in/'
+LOGIN_ERROR_URL    = '/login-error/'
+
+#####
+#SOCIAL_AUTH_LOGIN_REDIRECT_URL = LOGIN_REDIRECT_URL = LOGIN_URL
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/logincomplete'
+#SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = '/new-association-redirect-url/'
+#SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/account-disconnected-redirect-url/'
+
+SOCIAL_AUTH_ERROR_KEY = 'social_errors'
+
+#SOCIAL_AUTH_COMPLETE_URL_NAME  = 'socialauth_complete'
+#SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
+
+#####
+
+SOCIAL_AUTH_IMPORT_BACKENDS = (
+    'myproy.social_auth_extra_services',
+)
+
+SOCIAL_AUTH_ENABLED_BACKENDS = ('twitter','zeo', 'facebook')
+
+TWITTER_CONSUMER_KEY         = 'OisyZvqlGOgQu8eCrA2mRw'
+TWITTER_CONSUMER_SECRET      = 'HNiXDpWPT2C6ZkeO1Rtaq8GqBo5Lvvqq8ncoLLQ'
+ZEO_CONSUMER_KEY             = '09AF4677D82B1511F538FAF51E69BD67'
+ZEO_CONSUMER_SECRET          = '09AF4677D82B1511F538FAF51E69BD67'
 TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
 "django.core.context_processors.debug",
 "django.core.context_processors.i18n",
 "django.core.context_processors.media",
 "django.core.context_processors.static",
-"django.core.context_processors.tz",
-"django.contrib.messages.context_processors.messages")
+#"django.core.context_processors.tz",
+"django.contrib.messages.context_processors.messages", 
+'social_auth.context_processors.social_auth_by_type_backends',
+)
+
 
 
 # Local time zone for this installation. Choices can be found here:
@@ -36,7 +71,7 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = None
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -54,12 +89,12 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = os.path.join( APPLICATION_DIR, 'resources' )
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = 'http://192.168.2.7:8000/resources/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -115,7 +150,8 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    "/Users/d43pan/dev/djangoprojects/datarav/templates"
+    "/Users/d43pan/dev/djangoprojects/datarav/templates",
+    #os.path.join(os.path.basename(__file__), '/templates'),
 )
 
 INSTALLED_APPS = (
@@ -125,33 +161,72 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-		'totalday',
-		'sleeprecord',
+    'totalday',
+    'sleeprecord',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'social_auth'
 )
+
+AUTHENTICATION_BACKENDS = (
+    'social_auth.backends.twitter.TwitterBackend',
+    'social_auth.backends.zeo.ZeoBackend',
+    'social_auth.backends.facebook.FacebookBackend',
+#    'social_auth.backends.google.GoogleOAuthBackend',
+#    'social_auth.backends.google.GoogleOAuth2Backend',
+#    'social_auth.backends.google.GoogleBackend',
+#    'social_auth.backends.yahoo.YahooBackend',
+#    'social_auth.backends.contrib.linkedin.LinkedinBackend',
+#    'social_auth.backends.contrib.livejournal.LiveJournalBackend',
+#    'social_auth.backends.contrib.orkut.OrkutBackend',
+#    'social_auth.backends.contrib.foursquare.FoursquareBackend',
+#    'social_auth.backends.contrib.github.GithubBackend',
+#    'social_auth.backends.contrib.dropbox.DropboxBackend',
+#    'social_auth.backends.contrib.flickr.FlickrBackend',
+#    'social_auth.backends.OpenIDBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error.
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
     'handlers': {
         'mail_admins': {
-            'level': 'ERROR',
+            'level': 'INFO',
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'console':{
+            'level':'DEBUG',
+            'class':'logging.StreamHandler',
+            'formatter': 'simple'
+        },
     },
     'loggers': {
         'django.request': {
             'handlers': ['mail_admins'],
-            'level': 'ERROR',
+            'level': 'INFO',
             'propagate': True,
         },
+        'datarava': {
+            'handlers': ['console'],
+            'level': 'INFO'
+        }
     }
 }

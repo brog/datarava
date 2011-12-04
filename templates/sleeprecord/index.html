@@ -1,9 +1,120 @@
+<html>
+  <head>
+	<script type="text/javascript" src="{{MEDIA_URL}}js/jquery-1.7.min.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}js/jquery.jqplot.min.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}js/jqplot-plugins/jqplot.canvasTextRenderer.min.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}js/jqplot-plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}js/jqplot-plugins/jqplot.barRenderer.min.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}js/jqplot-plugins/jqplot.categoryAxisRenderer.min.js"></script>
+	<script type="text/javascript" src="{{MEDIA_URL}}js/jqplot-plugins/jqplot.pointLabels.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}css/jquery.jqplot.min.css" />
+  </head>
+  <body>
+	
+
+<p>{{user.id}}</p>
+	
 {% if sleep_records %}
-    <ul>
+<!-- 
+<ul>
     {% for record in sleep_records %}
         <li>SG Start Time: {{record.sleepgraphstarttime}} | wakeWindowStartIndex: {{record.wakewindowstartindex}} | wakeWindowEndIndex: {{record.wakewindowendindex}} </li>
     {% endfor %}
-    </ul>
+</ul>
+-->
+<div id="vitals">
+	Average:  {{sleep_aggs.zq__avg}}<br>
+	StandDev: {{sleep_aggs.zq__stddev}}<br>
+</div>
+<div id="chart1" ></div>
+<div id="chart3" style="height:400px;width:500px;position:relative;"></div>
+<!--<div id="info3" style="width:20%;float:right"></div>
+<script>
+$(document).ready(function(){
+  $('li').css('color','red')
+  var plot1 = $.jqplot ('chart1', [[
+{% for record in sleep_records %}
+{{record.zq}},
+{% endfor %}
+]]);
+});
+</script>
+-->
+<script>
+$(document).ready(function(){
+  var s1 = [ 
+{% for record in sleep_records %}
+{{record.timeindeep}},
+{% endfor %}
+];
+  var s2 = [
+{% for record in sleep_records %}
+{{record.timeinrem}},
+{% endfor %}
+];
+  var s3 = [
+{% for record in sleep_records %}
+{{record.timeinlight}},
+{% endfor %}
+];
+var s4 = [
+{% for record in sleep_records %}
+{{record.timeinwake}},
+{% endfor %}
+];
+
+  plot3 = $.jqplot('chart3', [s1, s2, s3, s4], {
+    // Tell the plot to stack the bars.
+    stackSeries: true,
+    captureRightClick: true,
+    seriesDefaults:{
+      renderer:$.jqplot.BarRenderer,
+      rendererOptions: {
+          // Put a 30 pixel margin between bars.
+          barMargin: 30,
+          // Highlight bars when mouse button pressed.
+          // Disables default highlighting on mouse over.
+          highlightMouseDown: true   
+      },
+      pointLabels: {show: true}
+    },
+    axes: {
+      xaxis: {
+          renderer: $.jqplot.CategoryAxisRenderer
+      },
+      yaxis: {
+        // Don't pad out the bottom of the data range.  By default,
+        // axes scaled as if data extended 10% above and below the
+        // actual range to prevent data points right on grid boundaries.
+        // Don't want to do that here.
+        padMin: 0
+      }
+    },
+    legend: {
+      show: true,
+      location: 'e',
+      placement: 'outside'
+    }, 
+	series:[
+	       {label:'Deep'},
+	       {label:'REM'}, 
+			{label:'Light'}, 
+			{label:'Wake'}			
+	   ]
+    
+  });
+  // Bind a listener to the "jqplotDataClick" event.  Here, simply change
+  // the text of the info3 element to show what series and ponit were
+  // clicked along with the data for that point.
+  $('#chart3').bind('jqplotDataClick', 
+    function (ev, seriesIndex, pointIndex, data) {
+      $('#info3').html('series: '+seriesIndex+', point: '+pointIndex+', data: '+data);
+    }
+  ); 
+});
+</script>
 {% else %}
     <p>No Records Came Back</p>
 {% endif %}
+</body>
+</html>

@@ -2,6 +2,8 @@
 from django.http import HttpResponse
 from django.template import Context, loader
 from sleeprecord.models import Sleeprecord
+from django.db.models import  Avg, StdDev
+from django.conf import settings
 import urllib2
 import simplejson
 import jsonlib
@@ -12,21 +14,37 @@ import io
 import pickle
 from urlparse import urlparse
 import time, datetime
+from django.contrib.auth.decorators import login_required
+import logging
+logger = logging.getLogger('datarava')
 
+@login_required
 def index(request):
-    sleep_records = Sleeprecord.objects.order_by('-sleepgraphstarttime').all()
+    
+    user_id = request.user.id
+    sleep_records = Sleeprecord.objects.filter(user_id=user_id).order_by('-sleepgraphstarttime').all()
+    sleep_aggs = Sleeprecord.objects.filter(user_id=user_id).all().aggregate(Avg('zq'), StdDev('zq'))
+    logger.error('testteststs')
+	
     t = loader.get_template('sleeprecord/index.html')
     c = Context({
         'sleep_records' : sleep_records, 
+        'sleep_aggs' : sleep_aggs,
+        'MEDIA_URL' : settings.MEDIA_URL,
+        'user' : request.user, 
     })
 
     return HttpResponse(t.render(c))
 
 def updatemydata(request, userid):
     time_format = "%m-%d-%Y %H:%M:%S"   
-    most_recent_local = Sleeprecord.objects.filter(user_id=userid).order_by('-sleepgraphstarttime')[0]
-    most_recent_local = most_recent_local.sleepgraphstarttime
-    most_recent_local_string = most_recent_local.strftime("%Y-%m-%d")
+    try:
+        most_recent_local = Sleeprecord.objects.filter(user_id=userid).order_by('-sleepgraphstarttime')[0]
+        most_recent_local = most_recent_local.sleepgraphstarttime
+        most_recent_local_string = most_recent_local.strftime("%Y-%m-%d")
+    except IndexError, e:
+        most_recent_local_string = "1999-01-01"
+        most_recent_local = datetime.datetime(1999,01,01)
     #d.strftime("%d/%m/%y")
     most_recent_remote= datetime.datetime.fromtimestamp(time.mktime(time.strptime(getMostRecentSleepRecord(userid), time_format)))
     update_or_not = ''
@@ -44,7 +62,8 @@ def updatemydata(request, userid):
         'userid' : userid,
         'most_recent_local' : most_recent_local,
         'most_recent_remote': most_recent_remote,
-        'update_or_not' : update_or_not
+        'update_or_not' : update_or_not, 
+        'MEDIA_URL' : settings.MEDIA_URL
     })
     return HttpResponse(t.render(c))
 
@@ -142,13 +161,6 @@ def sync_with_db(update_or_not, userid):
         
         sr.save()
 
-
-
-
-
-
-
-        ########
     return "something"
 
 def callZeoApi(method, *args, **kwargs):
