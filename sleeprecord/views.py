@@ -20,59 +20,87 @@ logger = logging.getLogger('datarava')
 
 @login_required
 def index(request):
-    
-    user_id = request.user.id
-    sleep_records = Sleeprecord.objects.filter(user_id=user_id).order_by('-sleepgraphstarttime').all()
-    sleep_aggs = Sleeprecord.objects.filter(user_id=user_id).all().aggregate(Avg('zq'), StdDev('zq'))
-    logger.error('testteststs')
+    if request.user.is_authenticated():
+        # Do something for authenticated users.
+        user_id = request.user.id
+         
+        sleep_records = Sleeprecord.objects.filter(user_id=user_id).order_by('-sleepgraphstarttime').all()
+        sleep_aggs = Sleeprecord.objects.filter(user_id=user_id).all().aggregate(Avg('zq'), StdDev('zq'))
+        #logger.error('testteststs')
 	
-    t = loader.get_template('sleeprecord/index.html')
-    c = Context({
-        'sleep_records' : sleep_records, 
-        'sleep_aggs' : sleep_aggs,
-        'MEDIA_URL' : settings.MEDIA_URL,
-        'user' : request.user, 
-    })
+        t = loader.get_template('sleeprecord/index.html')
+        c = Context({
+            'sleep_records' : sleep_records, 
+            'sleep_aggs' : sleep_aggs,
+            'MEDIA_URL' : settings.MEDIA_URL,
+            'user' : request.user, 
+
+        })
+
+    else:
+        # Do something for anonymous users.
+        t = loader.get_template('sleeprecord/index.html')
+        c = Context({
+            'sleep_records' : None, 
+            'sleep_aggs' : None,
+            'MEDIA_URL' : settings.MEDIA_URL,
+            'user' : None, 
+        })
 
     return HttpResponse(t.render(c))
 
-def updatemydata(request, userid):
-    time_format = "%m-%d-%Y %H:%M:%S"   
-    try:
-        most_recent_local = Sleeprecord.objects.filter(user_id=userid).order_by('-sleepgraphstarttime')[0]
-        most_recent_local = most_recent_local.sleepgraphstarttime
-        most_recent_local_string = most_recent_local.strftime("%Y-%m-%d")
-    except IndexError, e:
-        most_recent_local_string = "1999-01-01"
-        most_recent_local = datetime.datetime(1999,01,01)
-    #d.strftime("%d/%m/%y")
-    most_recent_remote= datetime.datetime.fromtimestamp(time.mktime(time.strptime(getMostRecentSleepRecord(userid), time_format)))
-    update_or_not = ''
-    #most_recent_remote = timestring = "2005-09-01 12:30:09"
-    if most_recent_local < most_recent_remote :
-        update_or_not = getDatesWithSleepDataInRange(most_recent_local_string) 
-        sync_with_db(update_or_not, userid)
-    else:
-        update_or_not = 'not'
+@login_required
+def updatemydata(request):
+    if request.user.is_authenticated():
+        # Do something for authenticated users.
+        userid = request.user.id    
+        time_format = "%m-%d-%Y %H:%M:%S"   
+        try:
+            most_recent_local = Sleeprecord.objects.filter(user_id=userid).order_by('-sleepgraphstarttime')[0]
+            most_recent_local = most_recent_local.sleepgraphstarttime
+            most_recent_local_string = most_recent_local.strftime("%Y-%m-%d")
+        except IndexError, e:
+            most_recent_local_string = "1999-01-01"
+            most_recent_local = datetime.datetime(1999,01,01)
+        #d.strftime("%d/%m/%y")
+        most_recent_remote= datetime.datetime.fromtimestamp(time.mktime(time.strptime(getMostRecentSleepRecord(userid, request.user), time_format)))
+        update_or_not = ''
+        #most_recent_remote = timestring = "2005-09-01 12:30:09"
+        if most_recent_local < most_recent_remote :
+            update_or_not = getDatesWithSleepDataInRange(most_recent_local_string, request.user) 
+            sync_with_db(update_or_not, userid, request.user)
+        else:
+            update_or_not = 'not'
 
 
-    t = loader.get_template('sleeprecord/updatemydata.html')
-    c = Context({
+        t = loader.get_template('sleeprecord/updatemydata.html')
+        c = Context({
         'update_data_type' : 'Sleeprecord',
         'userid' : userid,
         'most_recent_local' : most_recent_local,
         'most_recent_remote': most_recent_remote,
         'update_or_not' : update_or_not, 
         'MEDIA_URL' : settings.MEDIA_URL
-    })
+        })
+    else:
+        t = loader.get_template('sleeprecord/updatemydata.html')
+        c = Context({
+        'update_data_type' : 'Sleeprecord',
+        'userid' : None,
+        'most_recent_local' : None,
+        'most_recent_remote': None,
+        'update_or_not' : 'not', 
+        'MEDIA_URL' : settings.MEDIA_URL
+        })
+
     return HttpResponse(t.render(c))
 
-def sync_with_db(update_or_not, userid):
+def sync_with_db(update_or_not, userid, user):
     datelist = update_or_not['response']['dateList']['date']
     print datelist
     for date in datelist:
         something = 'something'
-        sleepRecord = callZeoApi('getSleepRecordForDate',month=date['month'],day=date['day'],year=date['year'])
+        sleepRecord = callZeoApi('getSleepRecordForDate', user, month=date['month'],day=date['day'],year=date['year'])
         #sleepRecord['response']['sleepRecord']['startDate']
         ########
         t = sleepRecord['response']['sleepRecord']['bedTime']
@@ -163,11 +191,16 @@ def sync_with_db(update_or_not, userid):
 
     return "something"
 
-def callZeoApi(method, *args, **kwargs):
+def callZeoApi(method, user, *args, **kwargs):
     apikey = "09AF4677D82B1511F538FAF51E69BD67"
     referrer = "http://themattnicole.com"
-    username = "d43pan@gmail.com"
-    password = "SHOCKORR4"
+    zeologin = user.get_profile().zeologin
+    zeopass = user.get_profile().zeopass
+    logger.error('zeologin: %s | zeopass: %s' % (zeologin, zeopass ))
+    #username = "d43pan@gmail.com"
+    username = zeologin
+    #password = "SHOCKORR4"
+    password = zeopass
     host = "api.myzeo.com:8443"
     baseUrl = "zeows/api/v1/json/sleeperService"
     accept_header_json = "application/json"
@@ -197,14 +230,14 @@ def callZeoApi(method, *args, **kwargs):
     results = json.load(response)
     return results
     
-def getMostRecentSleepRecord(userid, *args, **kwargs):
-    results = callZeoApi('getLatestSleepRecord')
+def getMostRecentSleepRecord(userid, user, *args, **kwargs):
+    results = callZeoApi('getLatestSleepRecord', user)
     startDateTime = "%d-%d-%d %d:%d:%d" % (results['response']['sleepRecord']['sleepGraphStartTime']['month'],results['response']['sleepRecord']['sleepGraphStartTime']['day'],results['response']['sleepRecord']['sleepGraphStartTime']['year'],results['response']['sleepRecord']['sleepGraphStartTime']['hour'],results['response']['sleepRecord']['sleepGraphStartTime']['minute'],results['response']['sleepRecord']['sleepGraphStartTime']['second'])
     return startDateTime
 
-def getDatesWithSleepDataInRange(dateFrom,*args, **kwargs):
+def getDatesWithSleepDataInRange(dateFrom, user, *args, **kwargs):
     kwargs = {"dateFrom":dateFrom}
-    results = callZeoApi('getDatesWithSleepDataInRange',**kwargs)
+    results = callZeoApi('getDatesWithSleepDataInRange', user, **kwargs)
     #dateFrom e.g. 2010-01-01
     
     return results

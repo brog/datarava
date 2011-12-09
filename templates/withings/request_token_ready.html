@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+Giving it a shot:<br>
+<br>
+token: {{oauth_token}}<br>
+verifier: {{ oauth_verifier }}<br>
+withings_userid: {{ withings_userid }}
+{% endblock content %}

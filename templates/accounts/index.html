@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% endblock head %}
+	
+	
+{% if user %}
+{% block sidebarmenucur %}
+{% endblock sidebarmenucur %}
+{% endif %}	
+	
+{%block content%}
+
+
+<form method="post" action="">
+  {% csrf_token %}
+     <pre>{{formset}}</pre>
+
+<input type="submit" value="Submit" method="post" />
+</form>
+
+
+{%endblock content%}

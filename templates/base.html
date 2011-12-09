@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+	{% endblock head %}
+    <link rel="stylesheet" href="style.css" />
+    <title>{% block title %}Datarav{% endblock %}</title>
+</head>
+
+<body>
+    <div id="sidebar">
+        {% block sidebar %}
+        <ul>
+            {% block sidebarmenu %}
+			<li><a href="/">Home</a></li>
+            <li><a href="/sleeprecords/">Sleeprecords</a></li>
+			<li><a href="/withings/request_token">Connect Withings</a></li>
+			<li><a href="/accounts">Editable account stuff</a></li>
+			{% block sidebarmenucur %}
+			{% endblock sidebarmenucur %}
+			
+			{% endblock sidebarmenu %}
+        </ul>
+        {% endblock %}
+    </div>
+
+    <div id="content">
+        {% block content %}{% endblock content%}
+    </div>
+</body>
+</html>

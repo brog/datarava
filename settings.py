@@ -25,20 +25,22 @@ DATABASES = {
 # the django-social-auth module uses the @login_required
 # decorator, which directs browsers to settings.LOGIN_URL
 # after either a successful OR failed login
-LOGIN_URL          = '/login-form/'
+LOGIN_URL          = '/login/'
 LOGIN_REDIRECT_URL = '/logged-in/'
 LOGIN_ERROR_URL    = '/login-error/'
 
+AUTH_PROFILE_MODULE = "accounts.UserProfile"
+
 #####
-#SOCIAL_AUTH_LOGIN_REDIRECT_URL = LOGIN_REDIRECT_URL = LOGIN_URL
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = LOGIN_REDIRECT_URL = LOGIN_URL
 SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/logincomplete'
-#SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = '/new-association-redirect-url/'
-#SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/account-disconnected-redirect-url/'
+SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = '/new-association-redirect-url/'
+SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/account-disconnected-redirect-url/'
 
 SOCIAL_AUTH_ERROR_KEY = 'social_errors'
 
-#SOCIAL_AUTH_COMPLETE_URL_NAME  = 'socialauth_complete'
-#SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
+SOCIAL_AUTH_COMPLETE_URL_NAME  = 'complete'
+SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
 
 #####
 
@@ -46,7 +48,7 @@ SOCIAL_AUTH_IMPORT_BACKENDS = (
     'myproy.social_auth_extra_services',
 )
 
-SOCIAL_AUTH_ENABLED_BACKENDS = ('twitter','zeo', 'facebook')
+SOCIAL_AUTH_ENABLED_BACKENDS = ('twitter', 'facebook')
 
 TWITTER_CONSUMER_KEY         = 'OisyZvqlGOgQu8eCrA2mRw'
 TWITTER_CONSUMER_SECRET      = 'HNiXDpWPT2C6ZkeO1Rtaq8GqBo5Lvvqq8ncoLLQ'
@@ -59,8 +61,21 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
 "django.core.context_processors.static",
 #"django.core.context_processors.tz",
 "django.contrib.messages.context_processors.messages", 
-'social_auth.context_processors.social_auth_by_type_backends',
+#'social_auth.context_processors.social_auth_by_type_backends',
 )
+
+
+OAUTH_WITHINGS_REQUEST_TOKEN_URL = 'https://oauth.withings.com/account/request_token'
+OAUTH_WITHINGS_ACCESS_TOKEN_URL = 'https://oauth.withings.com/account/access_token'
+OAUTH_WITHINGS_AUTHORIZATION_URL = 'https://oauth.withings.com/account/authorize'
+OAUTH_WITHINGS_CALLBACK_URL = 'http://192.168.2.7:8000/withings/request_token_ready'
+OAUTH_WITHINGS_RESOURCE_URL = 'http://wbsapi.withings.net/once?action=probe'
+
+# key and secret granted by the service provider for this consumer application - same as the MockOAuthDataStore
+OAUTH_WITHINGS_CONSUMER_KEY = 'e10d1995ed26c450dd36ee65d0b3092071bb33f5496c21f25d70c792'
+OAUTH_WITHINGS_CONSUMER_SECRET = '79c4fd4853cfcbf8c7f1f91156325e190bd34bddd2ed7cf4068ecf987026495'
+#OAUTH_WITHINGS_CONSUMER_KEY = '1e010b6eb501002ededd305c020f776dc0d74d2947ebb1ee37321589bc5785'
+#OAUTH_WITHINGS_CONSUMER_SECRET = '9c63ee28b58bccf497c019e1b9e83d73e2c263f6ed7ffb9d82f966597eb36'
 
 
 
@@ -144,13 +159,13 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'datarav.urls'
+ROOT_URLCONF = 'datarava.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    "/Users/d43pan/dev/djangoprojects/datarav/templates",
+    "/Users/d43pan/dev/ve/datarava/datarava/templates",
     #os.path.join(os.path.basename(__file__), '/templates'),
 )
 
@@ -167,13 +182,16 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    'social_auth'
+    'social_auth',
+    'accounts',
+    'withings'
+
 )
 
 AUTHENTICATION_BACKENDS = (
     'social_auth.backends.twitter.TwitterBackend',
-    'social_auth.backends.zeo.ZeoBackend',
-    'social_auth.backends.facebook.FacebookBackend',
+#   'social_auth.backends.zeo.ZeoBackend',
+#    'social_auth.backends.facebook.FacebookBackend',
 #    'social_auth.backends.google.GoogleOAuthBackend',
 #    'social_auth.backends.google.GoogleOAuth2Backend',
 #    'social_auth.backends.google.GoogleBackend',

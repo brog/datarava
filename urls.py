@@ -2,6 +2,7 @@ from django.conf.urls.defaults import patterns, include, url
 from django.conf import settings
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
+from django.views.generic.simple import direct_to_template
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -9,10 +10,14 @@ urlpatterns = patterns('',
 	      'django.views.static.serve',
 	      { 'document_root': settings.MEDIA_ROOT } ),
     url(r'^sleeprecords/$', 'sleeprecord.views.index'),
-    url(r'^sleeprecords/updatemydata/user/(\d+)/$', 'sleeprecord.views.updatemydata'),
-   url(r'', include('social_auth.urls')),
-#    url(r'^logout/$', logout, name='logout'),
-
+    url(r'^sleeprecords/updatemydata/$', 'sleeprecord.views.updatemydata'),
+    url(r'', include('social_auth.urls')),
+    url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
+    (r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'datarava/login.html'}), 
+    (r'^$', direct_to_template, {'template': 'datarava/index.html'}),
+     url(r'^withings/request_token_ready/$', 'withings.views.request_token_ready'),
+     url(r'^withings/request_token/$', 'withings.views.request_token'),  
+    url(r'^accounts/$', 'accounts.views.index'),  
 
 
     # Examples:
