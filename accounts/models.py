@@ -5,11 +5,11 @@ from django.forms import ModelForm
 
 class UserProfile(models.Model):
     user = models.ForeignKey(User, unique=True)
-    motto = models.CharField(max_length=333, blank=True)
-    zeologin = models.CharField(max_length=128, blank=True)
-    zeopass = models.CharField(max_length=128, blank=True)
-    withings_oauth_token = models.CharField(max_length=255, blank=True)
-    withings_oauth_verifier = models.CharField(max_length=255, blank=True)
+    motto = models.CharField(max_length=333, blank=True, null=True)
+    zeologin = models.CharField(max_length=128, blank=True, null=True)
+    zeopass = models.CharField(max_length=128, blank=True, null=True)
+    withings_oauth_token = models.CharField(max_length=255, blank=False, null=True)
+    withings_oauth_verifier = models.CharField(max_length=255, blank=False, null=True)
     withings_user_id = models.IntegerField()
 
 
