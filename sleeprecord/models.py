@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class Sleeprecord(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     user_id = models.IntegerField()
     awakenings = models.IntegerField()
     awakeningszqpoints = models.IntegerField(db_column='awakeningsZqPoints') # Field name made lowercase.

@@ -2,24 +2,43 @@
 import os.path
 APPLICATION_DIR = os.path.dirname( globals()[ '__file__' ] )
 
-DEBUG = True
+DATA_ENV = os.environ.get('DATA_ENV', 'local')
+
+DEBUG = True #DATA_ENV.startswith('local')
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+    ('Matt Nicole', 'matt@stupidventures.com'),
+    ('Brian Rogers', 'brian@stupidventures.com'),
 )
 
 MANAGERS = ADMINS
 
+database_configurations = {
+    'prod': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'datarava',
+        'USER': 'webapp',
+        'PASSWORD': 'dAta4m0re',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    },
+    'local': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'testdb',
+        'USER': 'testuser',
+        'PASSWORD': 'savemore',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    },
+    'local_sqlite':{
+        'ENGINE':'django.db.backends.sqlite3',
+        'NAME':'datarava',
+    },
+}
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'testdb',                      # Or path to database file if using sqlite3.
-        'USER': 'testuser',                      # Not used with sqlite3.
-        'PASSWORD': 'testpass',                  # Not used with sqlite3.
-        'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '3306',                      # Set to empty string for default. Not used with sqlite3.
-    }
+    'default': database_configurations[DATA_ENV]
 }
 
 # the django-social-auth module uses the @login_required
@@ -33,7 +52,7 @@ AUTH_PROFILE_MODULE = "accounts.UserProfile"
 
 #####
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = LOGIN_REDIRECT_URL = LOGIN_URL
-SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/logincomplete'
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/'
 SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = '/new-association-redirect-url/'
 SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/account-disconnected-redirect-url/'
 
@@ -104,12 +123,12 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = os.path.join( APPLICATION_DIR, 'resources' )
+MEDIA_ROOT = ''
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = 'http://192.168.2.7:8000/resources/'
+MEDIA_URL = '/resources/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -131,6 +150,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    os.path.abspath('.') + '/static/',
 )
 
 # List of finder classes that know how to find static files in
@@ -165,7 +185,8 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    "/Users/d43pan/dev/ve/datarava/datarava/templates",
+    #"/Users/d43pan/dev/ve/datarava/datarava/templates",
+    os.path.abspath('.') + '/templates'
     #os.path.join(os.path.basename(__file__), '/templates'),
 )
 

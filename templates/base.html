@@ -3,7 +3,7 @@
 <head>
     {% block head %}
 	{% endblock head %}
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="/static/datarava.css" />
     <title>{% block title %}Datarav{% endblock %}</title>
 </head>
 
@@ -20,6 +20,10 @@
 			{% endblock sidebarmenucur %}
 			
 			{% endblock sidebarmenu %}
+			
+			{% if user.is_authenticated %}
+			<li><a href="/logout">Logout</a></li>
+			{% endif %}
         </ul>
         {% endblock %}
     </div>

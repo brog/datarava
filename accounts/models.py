@@ -10,7 +10,7 @@ class UserProfile(models.Model):
     zeopass = models.CharField(max_length=128, blank=True, null=True)
     withings_oauth_token = models.CharField(max_length=255, blank=False, null=True)
     withings_oauth_verifier = models.CharField(max_length=255, blank=False, null=True)
-    withings_user_id = models.IntegerField()
+    withings_user_id = models.IntegerField(null=True)
 
 
 

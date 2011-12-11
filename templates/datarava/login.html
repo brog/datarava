@@ -1,11 +1,20 @@
 {% extends "base.html" %}
 {% load url from future %}
 
+
+{% block head %}
+	<style type="text/css">
+		.btnLogin{font-size: 22px;}
+	</style>
+{% endblock head %}
+
 {% block content %}
 
+<!--
 {% if form.errors %}
 <p>Your username and password didn't match. Please try again.</p>
 {% endif %}
+
 <div class="formlogin">
 <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
 {% csrf_token %}
@@ -25,9 +34,13 @@
 <input type="hidden" name="next" value="{{ next }}" />
 </form>
 </div>
+-->
 
-<div class="sociallogin">
-<a href="twitter">Log In with Twitter</a>
-</div>
+	<h1>Login to DataRava</h1>
+	<div>You must login using your Twitter account (f-those Facebook guys, right?)</div>
+	<br/>
+	<div class="sociallogin">
+		<a href="/login/twitter" class="btnLogin">Log In with Twitter</a>
+	</div>
 
 {% endblock %}

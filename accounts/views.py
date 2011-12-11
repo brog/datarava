@@ -18,9 +18,16 @@ logger = logging.getLogger('datarava')
 @login_required
 def index(request):
     user = request.user
-    profile = UserProfile.objects.get(user=user)
-
-#user.get_profile()
+    logger.error('GETTING REQUST %s', user)
+    logger.error('GETTING UserProfile %s', UserProfile.objects)
+    
+    try:
+        profile = UserProfile.objects.get(user=user)
+    except:
+        profile = UserProfile.objects.create(user=user)
+        logger.error('there is no profile %s', profile)
+    #user.get_profile()
+    
     logger.error(profile.id)
     UserProfileFormSet = modelformset_factory(UserProfile)
     if request.method == "POST":

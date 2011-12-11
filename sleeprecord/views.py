@@ -5,13 +5,11 @@ from sleeprecord.models import Sleeprecord
 from django.db.models import  Avg, StdDev
 from django.conf import settings
 import urllib2
-import simplejson
-import jsonlib
 import json
 import re
 import base64
 import io
-import pickle
+#import pickle
 from urlparse import urlparse
 import time, datetime
 from django.contrib.auth.decorators import login_required
@@ -19,7 +17,7 @@ import logging
 logger = logging.getLogger('datarava')
 
 @login_required
-def index(request):
+def index(request): 
     if request.user.is_authenticated():
         # Do something for authenticated users.
         user_id = request.user.id
@@ -52,6 +50,8 @@ def index(request):
 @login_required
 def updatemydata(request):
     if request.user.is_authenticated():
+        
+        logger.debug('lets update my data')
         # Do something for authenticated users.
         userid = request.user.id    
         time_format = "%m-%d-%Y %H:%M:%S"   
@@ -196,10 +196,12 @@ def callZeoApi(method, user, *args, **kwargs):
     referrer = "http://themattnicole.com"
     zeologin = user.get_profile().zeologin
     zeopass = user.get_profile().zeopass
+    
     logger.error('zeologin: %s | zeopass: %s' % (zeologin, zeopass ))
+    
     #username = "d43pan@gmail.com"
-    username = zeologin
     #password = "SHOCKORR4"
+    username = zeologin
     password = zeopass
     host = "api.myzeo.com:8443"
     baseUrl = "zeows/api/v1/json/sleeperService"
