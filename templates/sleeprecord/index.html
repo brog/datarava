@@ -12,11 +12,14 @@
 {% endblock head %}
 	
 	
-{% if user %}
+
 {% block sidebarmenucur %}
-<li> <a href="updatemydata">update my sleeprecords</a> </li>
+	{% if user.is_authenitcated %}
+		<li> <a href="updatemydata">update my sleeprecords</a> </li>
+	{% endif %}	
+	<li> <a href="all">global (all) sleep data</a> </li>
 {% endblock sidebarmenucur %}
-{% endif %}	
+
 	
 {%block content%}
 

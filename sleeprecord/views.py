@@ -47,6 +47,27 @@ def index(request):
 
     return HttpResponse(t.render(c))
 
+def all(request):    
+    user_id = request.user.id
+    
+    #sleep_records = Sleeprecord.objects.order_by('-sleepgraphstarttime').all()
+    sleep_aggs = Sleeprecord.objects.all().aggregate(Avg('zq'), StdDev('zq'), Avg('timeindeeppercentage'), Avg('timeinlightpercentage'), Avg('timeinrempercentage'), Avg('timeinwakepercentage'))
+    user_aggs = Sleeprecord.objects.filter(user_id=user_id).all().aggregate(Avg('zq'), StdDev('zq'), Avg('timeindeeppercentage'), Avg('timeinlightpercentage'), Avg('timeinrempercentage'), Avg('timeinwakepercentage'))
+    logger.debug('sleep agg %s', sleep_aggs)
+    #logger.error('testteststs')
+
+    t = loader.get_template('sleeprecord/global.html')
+    c = Context({
+        #'sleep_records' : sleep_records, 
+        'sleep_aggs' : sleep_aggs,
+        'user_aggs' : user_aggs,
+        'user' : request.user, 
+    })
+    
+    return HttpResponse(t.render(c))
+    
+    
+
 @login_required
 def updatemydata(request):
     if request.user.is_authenticated():

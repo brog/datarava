@@ -8,28 +8,34 @@
 </head>
 
 <body>
-    <div id="sidebar">
-        {% block sidebar %}
-        <ul>
-            {% block sidebarmenu %}
-			<li><a href="/">Home</a></li>
-            <li><a href="/sleeprecords/">Sleeprecords</a></li>
-			<li><a href="/withings/request_token">Connect Withings</a></li>
-			<li><a href="/accounts">Editable account stuff</a></li>
-			{% block sidebarmenucur %}
-			{% endblock sidebarmenucur %}
+	<div id="container">
+		<div id="header">
+			<h1><a href="/">DataRava</a></h1>
+		
+		</div>
+	    <div id="sidebar">
+	        {% block sidebar %}
+	        <ul>
+	            {% block sidebarmenu %}
+				<li><a href="/">Home</a></li>
+	            <li><a href="/sleeprecords/">Sleeprecords</a></li>
+				<li><a href="/withings/request_token">Connect Withings</a></li>
+				<li><a href="/accounts">Editable account stuff</a></li>
+				{% block sidebarmenucur %}
+				{% endblock sidebarmenucur %}
 			
-			{% endblock sidebarmenu %}
+				{% endblock sidebarmenu %}
 			
-			{% if user.is_authenticated %}
-			<li><a href="/logout">Logout</a></li>
-			{% endif %}
-        </ul>
-        {% endblock %}
-    </div>
+				{% if user.is_authenticated %}
+				<li><a href="/logout">Logout</a></li>
+				{% endif %}
+	        </ul>
+	        {% endblock %}
+	    </div>
 
-    <div id="content">
-        {% block content %}{% endblock content%}
-    </div>
+	    <div id="content">
+	        {% block content %}{% endblock content%}
+	    </div>
+	</div>
 </body>
 </html>
